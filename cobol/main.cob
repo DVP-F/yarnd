@@ -31,8 +31,8 @@
        01 KV-VALUE PIC X(50) VALUE SPACES.
        01 STATEMENT-COUNT PIC 9(3) VALUE ZERO.
        01 STATEMENT-LIST.
-          05 STATEMENT-ITEM OCCURS ZERO TO 128 TIMES
-             DEPENDING ON STATEMENT-COUNT PIC X(100) VALUE SPACES.
+           05 STATEMENT-ITEM OCCURS ZERO TO 128 TIMES
+               DEPENDING ON STATEMENT-COUNT PIC X(100) VALUE SPACES.
        01 STYLE PIC X(50) VALUE SPACES.
        01 SEED PIC 9(3) VALUE ZERO.
        *> numeral conversion
@@ -73,14 +73,19 @@
            END-PERFORM.
 
            *> get output config from given file
-           STRING "./styles/" STYLE ".yml" *> construct file name
+           STRING "./styles/" STYLE ".lst" *> construct file name
                INTO FILE-NAME
            END-STRING
 
-           OPEN INPUT INPUT-FILE
+           OPEN INPUT INPUT-FILE.
+           IF WS-FILE-STATUS NOT = "00"
+               DISPLAY "Failed to open file. Code:" WS-FILE-STATUS
+               STOP RUN.
+           END-IF.
+
            PERFORM UNTIL WS-FILE-STATUS NOT = "00"
 
-               *> parse file contents here, YAML style
+               *> parse file contents here
                READ INPUT-FILE
                    AT END
                        CONTINUE
