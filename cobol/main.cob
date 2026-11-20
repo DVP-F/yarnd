@@ -34,7 +34,7 @@
        *> config
        01 STATEMENT-COUNT PIC 9(3) VALUE ZERO.
        01 STATEMENT-LIST.
-           05 STATEMENT-ITEM OCCURS ZERO TO 128 TIMES
+           05 STATEMENT-ITEM OCCURS UNBOUNDED
                DEPENDING ON STATEMENT-COUNT PIC X(100) VALUE SPACES.
        01 STYLE PIC X(50) VALUE SPACES.
        01 SEED PIC 9(3) VALUE ZERO.
@@ -45,35 +45,36 @@
 
        *> verbs
        01 VERB-LIST.
-           05 VERB PIC X(50) VALUE SPACES OCCURS 128 TIMES
-       01  WS-VERB-COUNT PIC 9(3) VALUE 0.
+           05 VERB PIC X(50) VALUE SPACES OCCURS 128 TIMES.
+       01  WS-VERB-COUNT PIC 9(3) VALUE ZERO.
        01  WS-VERB-POINTER PIC 9(4) VALUE 1.
        01  WS-VERB-WORD PIC X(50).
 
        *> nouns
        01 NOUN-LIST.
-           05 NOUN PIC X(50) VALUE SPACES OCCURS 128 TIMES
-       01  WS-NOUN-COUNT PIC 9(3) VALUE 0.
+           05 NOUN PIC X(50) VALUE SPACES OCCURS 128 TIMES.
+       01  WS-NOUN-COUNT PIC 9(3) VALUE ZERO.
        01  WS-NOUN-POINTER PIC 9(4) VALUE 1.
        01  WS-NOUN-WORD PIC X(50).
 
        *> adjectives
        01 ADJECTIVE-LIST.
-           05 ADJECTIVE PIC X(50) VALUE SPACES OCCURS 128 TIMES
-       01  WS-ADJ-COUNT PIC 9(3) VALUE 0.
+           05 ADJECTIVE PIC X(50) VALUE SPACES OCCURS 128 TIMES.
+       01  WS-ADJ-COUNT PIC 9(3) VALUE ZERO.
        01  WS-ADJ-POINTER PIC 9(4) VALUE 1.
        01  WS-ADJ-WORD PIC X(50).
 
        *> sentences
        01 SENTENCE-LIST.
-           05 SENTENCE_ PIC X(256) VALUE SPACES OCCURS 128 TIMES
-       01  WS-SEN-COUNT PIC 9(3) VALUE 0.
+           05 SENTENCE-ITEM PIC X(256) VALUE SPACES OCCURS 128 TIMES.
+       01  WS-SEN-COUNT PIC 9(3) VALUE ZERO.
        01  WS-SEN-POINTER PIC 9(4) VALUE 1.
        01  WS-SEN-WORD PIC X(256).
 
        PROCEDURE DIVISION.
        0000-MAIN.
            PERFORM 1000-GET-CONFIG
+           PERFORM 2000-PRINT-RESULT
            STOP RUN.
        1000-GET-CONFIG.
            *> get config from stdin
@@ -89,18 +90,18 @@
                END-UNSTRING
 
                IF KV-KEY = "STYLE"
-                   MOVE KV-VALUE INTO STYLE
+                   MOVE KV-VALUE TO STYLE
                ELSE
                    IF KV-KEY = "SEED"
-                       MOVE KV-VALUE INTO NUM-AS-STRING
-                       MOVE NUM-AS-NUM INTO SEED
+                       MOVE KV-VALUE TO NUM-AS-STRING
+                       MOVE NUM-AS-NUM TO SEED
                    ELSE
                        IF KV-KEY = "COUNT"
-                           MOVE KV-VALUE INTO NUM-AS-STRING
-                           MOVE NUM-AS-NUM INTO STATEMENT-COUNT
-                       END-IF.
-                   END-IF.
-               END-IF.
+                           MOVE KV-VALUE TO NUM-AS-STRING
+                           MOVE NUM-AS-NUM TO STATEMENT-COUNT
+                       END-IF
+                   END-IF
+               END-IF
 
            END-PERFORM.
 
@@ -112,7 +113,7 @@
            OPEN INPUT INPUT-FILE.
            IF WS-FILE-STATUS NOT = "00"
                DISPLAY "Failed to open file. Code:" WS-FILE-STATUS
-               STOP RUN.
+               STOP RUN
            END-IF.
 
            *> parse file contents here
@@ -205,9 +206,26 @@
 
                        ADD 1 TO WS-SEN-COUNT
                        MOVE FUNCTION TRIM(WS-SEN-WORD)
-                           TO SENTENCE_(WS-SEN-COUNT)
+                           TO SENTENCE-ITEM(WS-SEN-COUNT)
                    END-PERFORM
                END-READ
 
            CLOSE INPUT-FILE
+
+       2000-PRINT-RESULT.
+           DISPLAY "====:====:====:====:====:====:===="
+           DISPLAY "Config"
+           DISPLAY "====:====:====:====:====:====:===="
+           DISPLAY "Style:           " STYLE
+           DISPLAY "Seed:            " SEED
+           DISPLAY "Statement count: " STATEMENT-COUNT
+           DISPLAY "Wordfile:        " FILE-NAME
+           DISPLAY SPACE
+           DISPLAY "====:====:====:====:====:====:===="
+           DISPLAY "Wordlists"
+           DISPLAY "====:====:====:====:====:====:===="
+           DISPLAY "Verbs:              " VERB-LIST
+           DISPLAY "Nouns:              " NOUN-LIST
+           DISPLAY "Adjectives:         " ADJECTIVE-LIST
+           DISPLAY "Sentence templates: " SENTENCE-LIST
 
