@@ -1,0 +1,20 @@
+# Verbs
+VERBS:
+- integrate
+- enhance
+- refine
+
+# Nouns
+NOUNS:
+- application
+- model
+
+# Adjectives
+ADJECTIVES:
+- abundant
+- quiescent
+- enchanting
+
+# Structured sentences
+SENTENCES:
+- We need to {V} our {A} {N} to {V} profit margins.

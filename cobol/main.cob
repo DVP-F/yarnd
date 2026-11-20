@@ -47,12 +47,15 @@
            *> get config from stdin
            PERFORM 3 TIMES *> loop three times to cover all fields
                ACCEPT INPUT-LINE *> read one line
+
                MOVE SPACES TO KV-KEY
                MOVE SPACES TO KV-VALUE
+
                UNSTRING INPUT-LINE
                    DELIMITED BY "="
                    INTO KV-KEY KV-VALUE
                END-UNSTRING
+
                IF KV-KEY = "STYLE"
                    MOVE KV-VALUE INTO STYLE
                ELSE
@@ -66,20 +69,25 @@
                        END-IF.
                    END-IF.
                END-IF.
+
            END-PERFORM.
+
            *> get output config from given file
-           STRING "./styles/" STYLE ".toml" *> construct file name
+           STRING "./styles/" STYLE ".yml" *> construct file name
                INTO FILE-NAME
            END-STRING
+
            OPEN INPUT INPUT-FILE
            PERFORM UNTIL WS-FILE-STATUS NOT = "00"
-               *> parse file contents here, TOML style
+
+               *> parse file contents here, YAML style
                READ INPUT-FILE
                    AT END
                        CONTINUE
                    NOT AT END
                        *> do something
                END-READ
+
            END-PERFORM
            CLOSE INPUT-FILE
 
