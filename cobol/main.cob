@@ -34,8 +34,7 @@
        *> config
        01 STATEMENT-COUNT PIC 9(3) VALUE ZERO.
        01 STATEMENT-LIST.
-           05 STATEMENT-ITEM OCCURS UNBOUNDED
-               DEPENDING ON STATEMENT-COUNT PIC X(100) VALUE SPACES.
+           05 STATEMENT-ITEM PIC X(100) VALUE SPACES OCCURS 128 TIMES.
        01 STYLE PIC X(50) VALUE SPACES.
        01 SEED PIC 9(3) VALUE ZERO.
 
@@ -73,6 +72,7 @@
 
        PROCEDURE DIVISION.
        0000-MAIN.
+           DISPLAY "Running..."
            PERFORM 1000-GET-CONFIG
            PERFORM 2000-PRINT-RESULT
            STOP RUN.
@@ -90,14 +90,14 @@
                END-UNSTRING
 
                IF KV-KEY = "STYLE"
-                   MOVE KV-VALUE TO STYLE
+                   MOVE FUNCTION TRIM(KV-VALUE) TO STYLE
                ELSE
                    IF KV-KEY = "SEED"
-                       MOVE KV-VALUE TO NUM-AS-STRING
+                       MOVE FUNCTION TRIM(KV-VALUE) TO NUM-AS-STRING
                        MOVE NUM-AS-NUM TO SEED
                    ELSE
                        IF KV-KEY = "COUNT"
-                           MOVE KV-VALUE TO NUM-AS-STRING
+                           MOVE FUNCTION TRIM(KV-VALUE) TO NUM-AS-STRING
                            MOVE NUM-AS-NUM TO STATEMENT-COUNT
                        END-IF
                    END-IF
@@ -106,13 +106,15 @@
            END-PERFORM.
 
            *> get output config from given file
-           STRING "./styles/" STYLE ".lst" *> construct file name
+               *> construct file name
+           STRING "./styles/" FUNCTION TRIM(STYLE) ".lst"
                INTO FILE-NAME
            END-STRING
 
            OPEN INPUT INPUT-FILE.
            IF WS-FILE-STATUS NOT = "00"
-               DISPLAY "Failed to open file. Code:" WS-FILE-STATUS
+               DISPLAY "Failed to open file '" FILE-NAME "'. Code:"
+                   WS-FILE-STATUS
                STOP RUN
            END-IF.
 
@@ -139,7 +141,7 @@
                        MOVE FUNCTION TRIM(WS-VERB-WORD)
                            TO VERB(WS-VERB-COUNT)
                    END-PERFORM
-               END-READ
+               END-READ.
 
            READ INPUT-FILE *> Nouns on second line
                AT END
@@ -162,7 +164,7 @@
                        MOVE FUNCTION TRIM(WS-NOUN-WORD)
                            TO NOUN(WS-NOUN-COUNT)
                    END-PERFORM
-               END-READ
+               END-READ.
 
            READ INPUT-FILE *> Adjectives on third line
                AT END
@@ -185,7 +187,7 @@
                        MOVE FUNCTION TRIM(WS-ADJ-WORD)
                            TO ADJECTIVE(WS-ADJ-COUNT)
                    END-PERFORM
-               END-READ
+               END-READ.
 
            READ INPUT-FILE *> Sentences on fourth line
                AT END
@@ -208,9 +210,9 @@
                        MOVE FUNCTION TRIM(WS-SEN-WORD)
                            TO SENTENCE-ITEM(WS-SEN-COUNT)
                    END-PERFORM
-               END-READ
+               END-READ.
 
-           CLOSE INPUT-FILE
+           CLOSE INPUT-FILE.
 
        2000-PRINT-RESULT.
            DISPLAY "====:====:====:====:====:====:===="
@@ -228,4 +230,6 @@
            DISPLAY "Nouns:              " NOUN-LIST
            DISPLAY "Adjectives:         " ADJECTIVE-LIST
            DISPLAY "Sentence templates: " SENTENCE-LIST
+           DISPLAY SPACE
 
+       .
