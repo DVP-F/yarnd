@@ -25,61 +25,61 @@
 
        WORKING-STORAGE SECTION.
       *> processing
-       01 WS-FILE-STATUS PIC XX VALUE "00".
-       01 FILE-NAME.
-          05 FILE-NAME-LEN PIC 9(3) VALUE ZERO.
-          05 FILE-NAME-BUF PIC X(255) VALUE SPACES.
-       01 INPUT-LINE PIC X(256) VALUE SPACES. *> STDIN
-       01 KV-KEY PIC X(50) VALUE SPACES.
-       01 KV-VALUE PIC X(50) VALUE SPACES.
+       01  WS-FILE-STATUS PIC XX VALUE "00".
+       01  FILE-NAME.
+           05  FILE-NAME-LEN PIC 9(3) VALUE ZERO.
+           05  FILE-NAME-BUF PIC X(255) VALUE SPACES.
+       01  INPUT-LINE PIC X(256) VALUE SPACES. *> STDIN
+       01  KV-KEY PIC X(50) VALUE SPACES.
+       01  KV-VALUE PIC X(50) VALUE SPACES.
 
       *> config
-       01 STATEMENT-COUNT PIC 9(3) VALUE ZERO.
-       01 STATEMENT-LIST.
-          05 STATEMENT-ITEM OCCURS 128 TIMES.
-             10 STATEMENT-ITEM-LEN PIC 9(3) VALUE ZERO.
-             10 STATEMENT-ITEM-BUF PIC X(100) VALUE SPACES.
-       01 STYLE.
-          05 STYLE-LEN PIC 9(3) VALUE ZERO.
-          05 STYLE-BUF PIC X(50) VALUE SPACES.
-       01 SEED PIC 9(3) VALUE ZERO.
+       01  STATEMENT-COUNT PIC 9(3) VALUE ZERO.
+       01  STATEMENT-LIST.
+           05  STATEMENT-ITEM OCCURS 128 TIMES.
+               10  STATEMENT-ITEM-LEN PIC 9(3) VALUE ZERO.
+               10  STATEMENT-ITEM-BUF PIC X(100) VALUE SPACES.
+       01  STYLE.
+           05  STYLE-LEN PIC 9(3) VALUE ZERO.
+           05  STYLE-BUF PIC X(50) VALUE SPACES.
+       01  SEED PIC 9(3) VALUE ZERO.
 
       *> numeral conversion
-       01 NUM-AS-STRING PIC X(5).
-       01 NUM-AS-NUM REDEFINES NUM-AS-STRING PIC 9(5).
+       01  NUM-AS-STRING PIC X(5).
+       01  NUM-AS-NUM REDEFINES NUM-AS-STRING PIC 9(5).
 
       *> verbs
-       01 VERB-LIST.
-          05 VERB OCCURS 128 TIMES.
-             10 VERB-LEN PIC 9(3) VALUE ZERO.
-             10 VERB-BUF PIC X(50) VALUE SPACES.
+       01  VERB-LIST.
+           05  VERB OCCURS 128 TIMES.
+               10  VERB-LEN PIC 9(3) VALUE ZERO.
+               10  VERB-BUF PIC X(50) VALUE SPACES.
        01  WS-VERB-COUNT PIC 9(3) VALUE ZERO.
        01  WS-VERB-POINTER PIC 9(4) VALUE 1.
        01  WS-VERB-WORD PIC X(50).
 
       *> nouns
-       01 NOUN-LIST.
-          05 NOUN OCCURS 128 TIMES.
-             10 NOUN-LEN PIC 9(3) VALUE ZERO.
-             10 NOUN-BUF PIC X(50) VALUE SPACES.
+       01  NOUN-LIST.
+           05  NOUN OCCURS 128 TIMES.
+               10  NOUN-LEN PIC 9(3) VALUE ZERO.
+               10  NOUN-BUF PIC X(50) VALUE SPACES.
        01  WS-NOUN-COUNT PIC 9(3) VALUE ZERO.
        01  WS-NOUN-POINTER PIC 9(4) VALUE 1.
        01  WS-NOUN-WORD PIC X(50).
 
       *> adjectives
-       01 ADJECTIVE-LIST.
-          05 ADJECTIVE OCCURS 128 TIMES.
-             10 ADJECTIVE-LEN PIC 9(3) VALUE ZERO.
-             10 ADJECTIVE-BUF PIC X(50) VALUE SPACES.
+       01  ADJECTIVE-LIST.
+           05  ADJECTIVE OCCURS 128 TIMES.
+               10  ADJECTIVE-LEN PIC 9(3) VALUE ZERO.
+               10  ADJECTIVE-BUF PIC X(50) VALUE SPACES.
        01  WS-ADJ-COUNT PIC 9(3) VALUE ZERO.
        01  WS-ADJ-POINTER PIC 9(4) VALUE 1.
        01  WS-ADJ-WORD PIC X(50).
 
       *> sentences
-       01 SENTENCE-LIST.
-          05 SENTENCE-ITEM OCCURS 128 TIMES.
-             10 SENTENCE-ITEM-LEN PIC 9(3) VALUE ZERO.
-             10 SENTENCE-ITEM-BUF PIC X(256) VALUE SPACES.
+       01  SENTENCE-LIST.
+           05  SENTENCE-ITEM OCCURS 128 TIMES.
+               10  SENTENCE-ITEM-LEN PIC 9(3) VALUE ZERO.
+               10  SENTENCE-ITEM-BUF PIC X(256) VALUE SPACES.
        01  WS-SEN-COUNT PIC 9(3) VALUE ZERO.
        01  WS-SEN-POINTER PIC 9(4) VALUE 1.
        01  WS-SEN-WORD PIC X(256).
@@ -123,9 +123,7 @@
 
            *> get output config from given file
                *> construct file name
-           STRING "./styles/"
-                  STYLE-BUF(1:STYLE-LEN)
-                  ".lst"
+           STRING "./styles/" STYLE-BUF(1:STYLE-LEN) ".lst"
                INTO FILE-NAME-BUF
            END-STRING
 
@@ -136,8 +134,7 @@
            IF WS-FILE-STATUS NOT = "00"
                DISPLAY "Failed to open file '"
                    FILE-NAME-BUF(1:FILE-NAME-LEN)
-                   "'. Code:"
-                   WS-FILE-STATUS
+                   "'. Code:" WS-FILE-STATUS
                GOBACK *> return
            END-IF.
 
@@ -250,19 +247,19 @@
            CLOSE INPUT-FILE.
 
        2000-PRINT-RESULT.
-           DISPLAY "====:====:====:====:====:====:===="
+           DISPLAY "====:====:====:====:====:====:====:====:===="
            DISPLAY "Config"
-           DISPLAY "====:====:====:====:====:====:===="
+           DISPLAY "====:====:====:====:====:====:====:====:===="
            DISPLAY "Style:           " STYLE-BUF(1:STYLE-LEN)
            DISPLAY "Seed:            " SEED
            DISPLAY "Statement count: " STATEMENT-COUNT
            DISPLAY "Wordfile:        " FILE-NAME-BUF(1:FILE-NAME-LEN)
            DISPLAY SPACE
-           DISPLAY "====:====:====:====:====:====:===="
+           DISPLAY "====:====:====:====:====:====:====:====:===="
            DISPLAY "Wordlists"
-           DISPLAY "====:====:====:====:====:====:===="
-           DISPLAY "Verbs:"
+           DISPLAY "====:====:====:====:====:====:====:====:===="
 
+           DISPLAY "Verbs:"
            PERFORM VARYING WS-VERB-COUNT FROM 1 BY 1
                UNTIL WS-VERB-COUNT > 128
                    OR VERB-LEN(WS-VERB-COUNT) = ZERO
@@ -299,6 +296,5 @@
            END-PERFORM
 
            DISPLAY SPACE
-
 
        .
